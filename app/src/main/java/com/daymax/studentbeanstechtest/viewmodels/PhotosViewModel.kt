@@ -1,16 +1,15 @@
 package com.daymax.studentbeanstechtest.viewmodels
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.navigation.NavHostController
+import androidx.lifecycle.ViewModel
 
-class PhotosViewModel(navController: NavHostController) {
+class PhotosViewModel: ViewModel() {
 
-    var offers = mutableStateListOf<ApiViewModel.Offer>()
+    var offers = mutableStateListOf<ApiViewModel.OfferResponse.Offer>()
     private val apiViewModel = ApiViewModel()
 
     init {
-        offers = apiViewModel.offers
+        offers = apiViewModel.offers //API fetches data when viewModel is initialised.
     }
 
 

@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,11 +13,8 @@ class ApiViewModel : ViewModel() {
 
     private val BASE_URL = "https://jsonplaceholder.typicode.com/"
 
-    var offers = mutableStateListOf<Offer>()
-
-    init {
-        fetchOffers(10) //Get the first 10 results for now
-    }
+    var offers = mutableStateListOf<OfferResponse.Offer>()
+    //An 'offer' is each object in the JSON response
 
     interface OffersApi {
         @GET("photos")
@@ -31,35 +27,34 @@ class ApiViewModel : ViewModel() {
         .build()
         .create(OffersApi::class.java)
 
-    data class OfferResponse(
-        val offers: List<Offer>
-    )
-    private fun OfferResponse.toModel(index: Int) =
-        Offer(
-            title = offers[index].title,
-            imageUrl = offers[index].imageUrl,
-        )
+    init {
+        offersService.apply { //Make sure the offersService has been instantiated before calling the getOffers method
+            fetchOffers()
+        }
+    }
 
-    data class Offer(
-        val title: String,
-        val imageUrl: String,
-    )
-
-    fun fetchOffers(
-        count: Int
+    private fun fetchOffers(
     ) {
         viewModelScope
             .launch {
                 try {
                     val tempList: OfferResponse = offersService.getOffers()
-                    for (i in 0 until count) {
-                        offers.add(tempList.toModel(i))
-                    }
+                    offers.addAll(tempList)
                 } catch (e: Exception) {
-                    Log.e("Api", "$e")
+                    Log.e("Api", "Api error-> + $e")
                 }
             }
     }
 
+    class OfferResponse : ArrayList<OfferResponse.Offer>() { //Generated with JsonToKotlinClass plugin
+        data class Offer(
+            val albumId: Int,
+            val id: Int,
+            val thumbnailUrl: String,
+            val title: String,
+            val url: String
+        )
+
+    }
 
 }

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">StudentBeansTechTest</string>
     <string name="app_title">Student Beans</string>
-    <string name="login_top_bar"> </string> //intentionally left blank!
+    <string name="login_top_bar"></string> //intentionally left blank!
     <string name="photos">Photos</string>
     <string name="welcome_back">Welcome back</string>
     <string name="log_in_prompt">Log in to your Student Beans account</string>
